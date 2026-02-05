@@ -46,8 +46,8 @@ export interface TransactionResult {
 
 export class WalletManager {
     private account: PrivateKeyAccount;
-    private publicClient: ReturnType<typeof createPublicClient>;
-    private walletClient: ReturnType<typeof createWalletClient>;
+    private publicClient: any;
+    private walletClient: any;
     private nonceMap: Map<string, number> = new Map();
     private config: WalletConfig;
 
@@ -200,6 +200,7 @@ export class WalletManager {
 
         // Send transaction
         const hash = await this.walletClient.sendTransaction({
+            account: this.account,
             to: params.to,
             value: params.value,
             data: params.data,
@@ -213,7 +214,7 @@ export class WalletManager {
         // Wait for confirmation
         const receipt = await this.publicClient.waitForTransactionReceipt({ hash });
 
-        const totalCost = receipt.gasUsed * receipt.effectiveGasPrice;
+        const totalCost = BigInt(receipt.gasUsed) * BigInt(receipt.effectiveGasPrice);
 
         console.log(`🦞 Transaction confirmed: ${receipt.status}`);
         console.log(`   Gas used: ${receipt.gasUsed}`);

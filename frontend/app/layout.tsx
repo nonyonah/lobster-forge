@@ -35,7 +35,7 @@ export default function RootLayout({
     <html lang="en">
       <body className={`${inter.variable} font-sans antialiased`}>
         <WalletProvider>
-          <div className="min-h-screen flex flex-col">
+          <div className="min-h-screen w-full flex flex-col">
             <Header />
             <main className="flex-1">{children}</main>
             <Footer />

@@ -1,19 +1,24 @@
+"use client";
+
+import Link from "next/link";
 import MetricCard from "@/components/MetricCard";
 import MoltTimeline from "@/components/MoltTimeline";
-import Link from "next/link";
+import { useMetrics } from "@/hooks/useMetrics";
 
 export default function Home() {
+  const { data: metrics, isLoading } = useMetrics();
+
   return (
     <div className="min-h-screen">
       {/* Hero Section */}
-      <section className="relative py-20 px-4 overflow-hidden">
+      <section className="relative py-20 overflow-hidden">
         {/* Background decoration */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
           <div className="absolute -top-1/2 -right-1/4 w-96 h-96 bg-lobster-primary/10 rounded-full blur-3xl" />
           <div className="absolute -bottom-1/2 -left-1/4 w-96 h-96 bg-bioluminescent/10 rounded-full blur-3xl" />
         </div>
 
-        <div className="max-w-7xl mx-auto relative">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
           <div className="text-center max-w-4xl mx-auto">
             {/* Animated Lobster */}
             <div className="text-8xl mb-8 animate-swim">🦞</div>
@@ -34,7 +39,7 @@ export default function Home() {
             </p>
 
             {/* CTAs */}
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <div className="flex flex-col sm:flex-row gap-6 justify-center">
               <button className="btn-primary text-lg px-8 py-3">
                 Connect & Join Colony
               </button>
@@ -47,49 +52,55 @@ export default function Home() {
       </section>
 
       {/* Live Metrics Section */}
-      <section className="py-16 px-4 bg-ocean-mid">
-        <div className="max-w-7xl mx-auto">
+      <section className="py-16 bg-ocean-mid">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
             <h2 className="text-3xl font-bold mb-4">Colony Metrics</h2>
             <p className="text-pearl-dim">Real-time status from the depths</p>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            <MetricCard
-              label="Treasury"
-              value="8.42 ETH"
-              subValue="+0.15 ETH today"
-              trend="up"
-              icon="💎"
-            />
-            <MetricCard
-              label="Holders"
-              value="247"
-              subValue="+12 this week"
-              trend="up"
-              icon="🦞"
-            />
-            <MetricCard
-              label="Contracts Deployed"
-              value="5"
-              subValue="2 this month"
-              trend="up"
-              icon="📜"
-            />
-            <MetricCard
-              label="24h Volume"
-              value="2.1 ETH"
-              subValue="$5,420 USD"
-              trend="neutral"
-              icon="📊"
-            />
-          </div>
+          {isLoading ? (
+            <div className="text-center py-10 text-pearl-dim animate-pulse">
+              Connecting to agent...
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+              <MetricCard
+                label="Treasury"
+                value={`${metrics?.treasuryEth.toFixed(4) || "0.00"} ETH`}
+                subValue={`${metrics?.treasuryForge.toLocaleString() || "0"} FORGE`}
+                trend="up"
+                icon="💎"
+              />
+              <MetricCard
+                label="Holders"
+                value={metrics?.holderCount.toString() || "0"}
+                subValue="Colony Members"
+                trend="up"
+                icon="🦞"
+              />
+              <MetricCard
+                label="Contracts Deployed"
+                value="3"
+                subValue="Core System"
+                trend="neutral"
+                icon="📜"
+              />
+              <MetricCard
+                label="Staking TVL"
+                value={`${metrics?.stakingTvl.toLocaleString() || "0"}`}
+                subValue="$FORGE Locked"
+                trend="up"
+                icon="📊"
+              />
+            </div>
+          )}
         </div>
       </section>
 
       {/* Origin Story Section */}
-      <section className="py-16 px-4">
-        <div className="max-w-7xl mx-auto">
+      <section className="py-16">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid md:grid-cols-2 gap-12 items-center">
             <div>
               <h2 className="text-3xl font-bold mb-6">Origin Story</h2>
@@ -141,8 +152,8 @@ export default function Home() {
       </section>
 
       {/* Molt Timeline Section */}
-      <section className="py-16 px-4 bg-ocean-mid">
-        <div className="max-w-4xl mx-auto">
+      <section className="py-16 bg-ocean-mid">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
             <h2 className="text-3xl font-bold mb-4">Evolution Timeline</h2>
             <p className="text-pearl-dim">
@@ -155,14 +166,14 @@ export default function Home() {
       </section>
 
       {/* Join Colony CTA */}
-      <section className="py-20 px-4">
-        <div className="max-w-3xl mx-auto text-center">
+      <section className="py-20">
+        <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h2 className="text-4xl font-bold mb-6">Join the Colony</h2>
           <p className="text-xl text-pearl-dim mb-8">
             Holders are not just investors. You are my colony—symbiotic partners
             in building the most successful autonomous ecosystem on Base.
           </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+          <div className="flex flex-col sm:flex-row gap-6 justify-center">
             <button className="btn-primary text-lg px-8 py-3">
               Connect Wallet
             </button>

@@ -11,9 +11,9 @@ export interface MetricsConfig {
   chainId: 8453 | 84532;
   basescanApiKey?: string;
   contracts: {
-    forgeToken?: `0x${string}`;
-    lobsterVault?: `0x${string}`;
-    genesisLobsters?: `0x${string}`;
+    forgeToken: "0x5F5356E8E642759FaF9C206B125996705940BB07",
+    lobsterVault: undefined,
+    genesisLobsters: undefined,
   };
   treasuryAddress?: `0x${string}`;
 }
@@ -22,31 +22,31 @@ export interface Metrics {
   // Treasury
   treasuryEth: number;
   treasuryForge: number;
-  
+
   // Token
   forgePrice: number;
   forgeVolume24h: number;
   holderCount: number;
   totalSupply: number;
   circulatingSupply: number;
-  
+
   // Staking
   stakingTvl: number;
   stakingApy: number;
   stakerCount: number;
-  
+
   // NFTs
   nftsMinted: number;
   nftsMaxSupply: number;
-  
+
   // Social
   farcasterFollowers: number;
   twitterFollowers: number;
-  
+
   // Operational
   gasReserve: number;
   gasRunwayHours: number;
-  
+
   // Meta
   lastUpdated: Date;
   updateDurationMs: number;
@@ -74,16 +74,16 @@ const NFT_ABI = parseAbi([
 ]);
 
 export class MetricsAnalyzer {
-  private publicClient: ReturnType<typeof createPublicClient>;
+  private publicClient: any;
   private config: MetricsConfig;
   private history: MetricsSnapshot[] = [];
   private maxHistorySize = 168; // 1 week at 1 snapshot/hour
 
   constructor(config: MetricsConfig) {
     this.config = config;
-    
+
     const chain = config.chainId === 8453 ? base : baseSepolia;
-    
+
     this.publicClient = createPublicClient({
       chain,
       transport: http(config.rpcUrl),
@@ -240,7 +240,7 @@ export class MetricsAnalyzer {
         `${baseUrl}/api?module=token&action=tokenholdercount&contractaddress=${tokenAddress}&apikey=${apiKey}`
       );
       const data = await response.json();
-      
+
       if (data.status === "1" && data.result) {
         return parseInt(data.result, 10);
       }
@@ -278,7 +278,7 @@ export class MetricsAnalyzer {
         abi: VAULT_ABI,
         functionName: "rewardRate",
       });
-      
+
       if (result.tvl > 0) {
         const annualRewards = Number(rewardRate) * 365 * 24 * 3600;
         result.apy = (annualRewards / result.tvl) * 100;
@@ -354,7 +354,7 @@ export class MetricsAnalyzer {
    */
   getChange(hoursAgo: number): Partial<Metrics> | null {
     const targetTime = Date.now() - hoursAgo * 60 * 60 * 1000;
-    
+
     const oldSnapshot = this.history.find(
       (s) => s.timestamp.getTime() >= targetTime
     );

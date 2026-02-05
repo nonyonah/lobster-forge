@@ -81,33 +81,23 @@ const mockProposals: Proposal[] = [
     { id: "2", title: "Increase staking rewards", votes: 23, status: "pending" },
 ];
 
+import { useMetrics } from "@/hooks/useMetrics";
+
 export default function MonitoringDashboard() {
-    const [metrics, setMetrics] = useState<DashboardMetrics>(mockMetrics);
+    const { data: metrics } = useMetrics();
     const [contracts, setContracts] = useState<DeployedContract[]>(mockContracts);
     const [posts, setPosts] = useState<SocialPost[]>(mockPosts);
     const [proposals, setProposals] = useState<Proposal[]>(mockProposals);
     const [isLive, setIsLive] = useState(true);
-
-    // Simulate real-time updates
-    useEffect(() => {
-        if (!isLive) return;
-
-        const interval = setInterval(() => {
-            setMetrics((prev) => ({
-                ...prev,
-                treasuryEth: prev.treasuryEth + (Math.random() - 0.5) * 0.01,
-                holderCount: prev.holderCount + Math.floor(Math.random() * 2),
-            }));
-        }, 5000);
-
-        return () => clearInterval(interval);
-    }, [isLive]);
 
     const statusColors = {
         healthy: "bg-green-500",
         conservation: "bg-yellow-500",
         survival: "bg-red-500",
     };
+
+    // Status warning if unknown
+    const currentStatus = metrics ? (metrics.treasuryEth < 0.5 ? "conservation" : "healthy") : "healthy";
 
     return (
         <div className="min-h-screen bg-ocean-deep text-pearl p-6">
@@ -138,13 +128,13 @@ export default function MonitoringDashboard() {
 
             {/* Status Banner */}
             <div
-                className={`${statusColors[metrics.status]} bg-opacity-20 border border-current rounded-lg p-4 mb-6`}
+                className={`${statusColors[currentStatus]} bg-opacity-20 border border-current rounded-lg p-4 mb-6`}
             >
                 <div className="flex items-center gap-3">
-                    <div className={`w-4 h-4 rounded-full ${statusColors[metrics.status]}`} />
-                    <span className="font-semibold uppercase">{metrics.status} Mode</span>
+                    <div className={`w-4 h-4 rounded-full ${statusColors[currentStatus]}`} />
+                    <span className="font-semibold uppercase">{currentStatus} Mode</span>
                     <span className="text-pearl-dim">
-                        •  Last evolution: {metrics.lastEvolution}
+                        •  Last updated: {metrics?.lastUpdated ? new Date(metrics.lastUpdated).toLocaleTimeString() : "Pending..."}
                     </span>
                 </div>
             </div>
@@ -157,21 +147,21 @@ export default function MonitoringDashboard() {
                         <div className="space-y-4">
                             <div>
                                 <p className="text-pearl-dim text-sm">Treasury</p>
-                                <p className="text-2xl font-bold">{metrics.treasuryEth.toFixed(4)} ETH</p>
+                                <p className="text-2xl font-bold">{metrics?.treasuryEth.toFixed(4) || "0.0000"} ETH</p>
                             </div>
                             <div>
                                 <p className="text-pearl-dim text-sm">Holders</p>
-                                <p className="text-2xl font-bold">{metrics.holderCount}</p>
+                                <p className="text-2xl font-bold">{metrics?.holderCount || 0}</p>
                             </div>
                             <div>
                                 <p className="text-pearl-dim text-sm">Staking TVL</p>
                                 <p className="text-2xl font-bold">
-                                    {metrics.stakingTvl.toLocaleString()} FORGE
+                                    {metrics?.stakingTvl.toLocaleString() || "0"} FORGE
                                 </p>
                             </div>
                             <div>
                                 <p className="text-pearl-dim text-sm">NFTs Minted</p>
-                                <p className="text-2xl font-bold">{metrics.nftsMinted}/1000</p>
+                                <p className="text-2xl font-bold">{metrics?.nftsMinted || 0}/1000</p>
                             </div>
                         </div>
                     </div>
@@ -189,10 +179,10 @@ export default function MonitoringDashboard() {
                                 <div key={i} className="flex items-center gap-3">
                                     <div
                                         className={`w-3 h-3 rounded-full ${item.status === "complete"
-                                                ? "bg-green-500"
-                                                : item.status === "active"
-                                                    ? "bg-lobster-primary animate-pulse"
-                                                    : "bg-gray-600"
+                                            ? "bg-green-500"
+                                            : item.status === "active"
+                                                ? "bg-lobster-primary animate-pulse"
+                                                : "bg-gray-600"
                                             }`}
                                     />
                                     <span className={item.status === "active" ? "font-semibold" : "text-pearl-dim"}>

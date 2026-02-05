@@ -1,7 +1,6 @@
 @import "tailwindcss";
 
-:root {
-  /* Deep Sea Premium - Flat Design Palette */
+@theme {
   --color-ocean-deep: #0a1628;
   --color-ocean-mid: #0f2138;
   --color-ocean-surface: #152742;
@@ -32,25 +31,13 @@
   --radius-lg: 0.75rem;
   --radius-xl: 1rem;
   --radius-full: 9999px;
-
-  /* Transitions */
-  --transition-fast: 150ms ease;
-  --transition-normal: 250ms ease;
-  --transition-slow: 400ms ease;
-}
-
-* {
-  box-sizing: border-box;
-  padding: 0;
-  margin: 0;
 }
 
 html,
 body {
-  max-width: 100vw;
-  overflow-x: hidden;
   background: var(--color-ocean-deep);
   color: var(--color-pearl);
+  overflow-x: hidden;
 }
 
 body {

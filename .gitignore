@@ -48,6 +48,9 @@ contracts/typechain-types/
 agent/state.json
 !agent/state.json.example
 
+# Bankr Auth
+agent/skills/bankr/config.json
+
 # IDE
 .idea/
 .vscode/

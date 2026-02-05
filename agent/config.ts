@@ -21,8 +21,14 @@ export const config = {
 
     // API Keys
     basescanApiKey: process.env.BASESCAN_API_KEY || "",
-    neynarApiKey: process.env.NEYNAR_API_KEY || "", // Farcaster
-    twitterBearerToken: process.env.TWITTER_BEARER_TOKEN || "",
+
+    // Social (Twitter)
+    twitter: {
+        apiKey: process.env.TWITTER_API_KEY || "",
+        apiSecret: process.env.TWITTER_API_SECRET || "",
+        accessToken: process.env.TWITTER_ACCESS_TOKEN || "",
+        accessSecret: process.env.TWITTER_ACCESS_SECRET || "",
+    },
 
     // Evolution Thresholds
     thresholds: {
@@ -60,7 +66,7 @@ export const config = {
     loopIntervalMs: 4 * 60 * 60 * 1000, // 4 hours
 
     // Social
-    farcasterChannel: "lobsterforge",
+
     twitterHandle: "LobsterForge",
 };
 

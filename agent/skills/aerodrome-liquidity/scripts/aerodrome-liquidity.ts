@@ -4,7 +4,7 @@
  */
 
 import { parseAbi, parseEther, formatEther, type Hash } from "viem";
-import type { WalletManager } from "../base-wallet-manager/scripts/wallet-manager";
+import type { WalletManager } from "../../base-wallet-manager/scripts/wallet-manager";
 
 // Aerodrome contract addresses (Base Mainnet)
 const AERODROME_CONTRACTS = {
@@ -13,7 +13,11 @@ const AERODROME_CONTRACTS = {
         voter: "0x16613524e02ad97eDfeF371bC883F2F5d6C480A5" as `0x${string}`,
         factory: "0x420DD381b31aEf6683db6B902084cB0FFECe40Da" as `0x${string}`,
     },
-    // Sepolia addresses would go here when available
+    sepolia: {
+        router: "0x0000000000000000000000000000000000000000" as `0x${string}`,
+        voter: "0x0000000000000000000000000000000000000000" as `0x${string}`,
+        factory: "0x0000000000000000000000000000000000000000" as `0x${string}`,
+    },
 };
 
 // Router ABI (subset)

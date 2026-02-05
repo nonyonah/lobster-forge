@@ -214,6 +214,21 @@ export default function LorePage() {
                     </div>
                 </section>
 
+                {/* Brand Assets */}
+                <section className="mb-16 text-center">
+                    <h2 className="text-2xl font-bold mb-6">Brand Assets</h2>
+                    <p className="text-pearl-dim mb-6">
+                        Spread the word. The colony grows with every signal.
+                    </p>
+                    <a
+                        href="/logo.png"
+                        download="lobster-forge-logo.png"
+                        className="btn-secondary inline-flex items-center gap-2"
+                    >
+                        <span>📥</span> Download Logo Kit
+                    </a>
+                </section>
+
                 {/* Community Links */}
                 <section className="text-center">
                     <h2 className="text-2xl font-bold mb-6">Join the Colony</h2>

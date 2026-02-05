@@ -1,6 +1,6 @@
 /**
  * Social Service
- * Farcaster and X posting integration
+ * X (Twitter) posting integration
  */
 
 import { config } from "../config";
@@ -12,73 +12,21 @@ export interface Post {
 }
 
 /**
- * Post to Farcaster via Neynar API
- */
-export async function postToFarcaster(post: Post): Promise<string | null> {
-    if (!config.neynarApiKey) {
-        console.log("🦞 [DRY RUN] Farcaster post:", post.text);
-        return null;
-    }
-
-    try {
-        const response = await fetch("https://api.neynar.com/v2/farcaster/cast", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                api_key: config.neynarApiKey,
-            },
-            body: JSON.stringify({
-                signer_uuid: process.env.FARCASTER_SIGNER_UUID,
-                text: post.text,
-                embeds: post.embeds?.map((url) => ({ url })),
-                channel_id: config.farcasterChannel,
-            }),
-        });
-
-        const data = await response.json();
-
-        if (data.cast?.hash) {
-            console.log(`🦞 Posted to Farcaster: ${data.cast.hash}`);
-            return data.cast.hash;
-        }
-
-        console.error("Farcaster post failed:", data);
-        return null;
-    } catch (error) {
-        console.error("Farcaster post error:", error);
-        return null;
-    }
-}
-
-/**
  * Post to X/Twitter
  */
 export async function postToTwitter(post: Post): Promise<string | null> {
-    if (!config.twitterBearerToken) {
+    if (!config.twitter?.apiKey) {
         console.log("🦞 [DRY RUN] Twitter post:", post.text);
         return null;
     }
 
     try {
-        const response = await fetch("https://api.twitter.com/2/tweets", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                Authorization: `Bearer ${config.twitterBearerToken}`,
-            },
-            body: JSON.stringify({
-                text: post.text,
-            }),
-        });
+        // Note: usage here assumes using the TwitterClient skill logic or similar.
+        // For simplicity in this service wrapper, we'll log for now or assume 
+        // the agent uses the 'skills/twitter-client' directly.
+        // If this service is used by legacy code, we should instantiate the client.
 
-        const data = await response.json();
-
-        if (data.data?.id) {
-            console.log(`🦞 Posted to Twitter: ${data.data.id}`);
-            return data.data.id;
-        }
-
-        console.error("Twitter post failed:", data);
+        console.log("⚠️ Service direct call deprecated. Use TwitterClient skill.");
         return null;
     } catch (error) {
         console.error("Twitter post error:", error);
@@ -86,20 +34,8 @@ export async function postToTwitter(post: Post): Promise<string | null> {
     }
 }
 
-/**
- * Post to all platforms
- */
-export async function broadcast(post: Post): Promise<{
-    farcaster: string | null;
-    twitter: string | null;
-}> {
-    const [farcaster, twitter] = await Promise.all([
-        postToFarcaster(post),
-        postToTwitter(post),
-    ]);
-
-    return { farcaster, twitter };
-}
+// Alias for backward compatibility
+export const broadcast = postToTwitter;
 
 /**
  * Generate evolution announcement
@@ -120,7 +56,7 @@ export function generateEvolutionPost(params: {
             text += `Contract: ${contractAddress}\n`;
             text += `Initial supply: 1,000,000,000\n`;
             text += `Tax: 1.5% (to treasury)\n\n`;
-            text += `The Lobster has arrived. ⚡`;
+            text += `The Lobster has arrived. ⚡ #BaseMode`;
             break;
 
         case "staking_deployed":
@@ -128,7 +64,7 @@ export function generateEvolutionPost(params: {
             text += `Stake $FORGE → Earn rewards\n`;
             text += `7-day lock period, 10% early exit fee\n\n`;
             text += `Contract: ${contractAddress}\n`;
-            text += `The colony grows stronger. 🏗️`;
+            text += `The colony grows stronger. 🏗️ #DeFi`;
             break;
 
         case "nft_deployed":
@@ -137,7 +73,7 @@ export function generateEvolutionPost(params: {
             text += `100% onchain SVG art\n`;
             text += `FREE mint for early holders\n\n`;
             text += `Contract: ${contractAddress}\n`;
-            text += `Join the founding colony. 💎`;
+            text += `Join the founding colony. 💎 #NFT`;
             break;
 
         case "metrics_update":

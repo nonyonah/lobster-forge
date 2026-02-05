@@ -9,76 +9,76 @@ import * as path from "path";
 const VERCEL_API_BASE = "https://api.vercel.com";
 
 export interface ComponentConfig {
-    name: string;
-    type: "page" | "component";
-    props?: Record<string, string>;
-    contractAddress?: `0x${string}`;
-    hooks?: string[];
+  name: string;
+  type: "page" | "component";
+  props?: Record<string, string>;
+  contractAddress?: `0x${string}`;
+  hooks?: string[];
 }
 
 export interface DeploymentResult {
-    id: string;
-    url: string;
-    readyState: string;
-    createdAt: string;
+  id: string;
+  url: string;
+  readyState: string;
+  createdAt: string;
 }
 
 export interface ComponentTemplate {
-    name: string;
-    code: string;
-    styles?: string;
+  name: string;
+  code: string;
+  styles?: string;
 }
 
 export class FrontendBuilder {
-    private vercelToken: string;
-    private projectId: string;
-    private frontendPath: string;
+  private vercelToken: string;
+  private projectId: string;
+  private frontendPath: string;
 
-    constructor(
-        vercelToken: string,
-        projectId: string,
-        frontendPath: string
-    ) {
-        this.vercelToken = vercelToken;
-        this.projectId = projectId;
-        this.frontendPath = frontendPath;
+  constructor(
+    vercelToken: string,
+    projectId: string,
+    frontendPath: string
+  ) {
+    this.vercelToken = vercelToken;
+    this.projectId = projectId;
+    this.frontendPath = frontendPath;
 
-        console.log("🦞 Frontend Builder initialized");
+    console.log("🦞 Frontend Builder initialized");
+  }
+
+  /**
+   * Generate a React component from template
+   */
+  generateComponent(config: ComponentConfig): ComponentTemplate {
+    console.log(`🦞 Generating component: ${config.name}`);
+
+    let code = "";
+
+    switch (config.name) {
+      case "StakingInterface":
+        code = this.generateStakingInterface(config);
+        break;
+      case "NFTMintButton":
+        code = this.generateNFTMintButton(config);
+        break;
+      case "TreasuryDisplay":
+        code = this.generateTreasuryDisplay(config);
+        break;
+      case "ProposalVoting":
+        code = this.generateProposalVoting(config);
+        break;
+      default:
+        code = this.generateGenericComponent(config);
     }
 
-    /**
-     * Generate a React component from template
-     */
-    generateComponent(config: ComponentConfig): ComponentTemplate {
-        console.log(`🦞 Generating component: ${config.name}`);
+    return { name: config.name, code };
+  }
 
-        let code = "";
-
-        switch (config.name) {
-            case "StakingInterface":
-                code = this.generateStakingInterface(config);
-                break;
-            case "NFTMintButton":
-                code = this.generateNFTMintButton(config);
-                break;
-            case "TreasuryDisplay":
-                code = this.generateTreasuryDisplay(config);
-                break;
-            case "ProposalVoting":
-                code = this.generateProposalVoting(config);
-                break;
-            default:
-                code = this.generateGenericComponent(config);
-        }
-
-        return { name: config.name, code };
-    }
-
-    /**
-     * Generate staking interface component
-     */
-    private generateStakingInterface(config: ComponentConfig): string {
-        return `"use client";
+  /**
+   * Generate staking interface component
+   */
+  private generateStakingInterface(config: ComponentConfig): string {
+    return `"use client";
 
 import { useState } from "react";
 import { useAccount, useWriteContract, useReadContract } from "wagmi";
@@ -173,13 +173,13 @@ export default function StakingInterface() {
     </div>
   );
 }`;
-    }
+  }
 
-    /**
-     * Generate NFT mint button component
-     */
-    private generateNFTMintButton(config: ComponentConfig): string {
-        return `"use client";
+  /**
+   * Generate NFT mint button component
+   */
+  private generateNFTMintButton(config: ComponentConfig): string {
+    return `"use client";
 
 import { useAccount, useWriteContract, useReadContract } from "wagmi";
 
@@ -240,13 +240,13 @@ export default function NFTMintButton() {
     </div>
   );
 }`;
-    }
+  }
 
-    /**
-     * Generate treasury display component
-     */
-    private generateTreasuryDisplay(config: ComponentConfig): string {
-        return `"use client";
+  /**
+   * Generate treasury display component
+   */
+  private generateTreasuryDisplay(config: ComponentConfig): string {
+    return `"use client";
 
 import { useBalance } from "wagmi";
 import { formatEther } from "viem";
@@ -275,13 +275,13 @@ export default function TreasuryDisplay() {
     </div>
   );
 }`;
-    }
+  }
 
-    /**
-     * Generate proposal voting component
-     */
-    private generateProposalVoting(config: ComponentConfig): string {
-        return `"use client";
+  /**
+   * Generate proposal voting component
+   */
+  private generateProposalVoting(config: ComponentConfig): string {
+    return `"use client";
 
 import { useState } from "react";
 
@@ -338,19 +338,19 @@ export default function ProposalVoting() {
     </div>
   );
 }`;
-    }
+  }
 
-    /**
-     * Generate generic component
-     */
-    private generateGenericComponent(config: ComponentConfig): string {
-        const propsInterface = config.props
-            ? Object.entries(config.props)
-                .map(([key, type]) => `  ${key}: ${type};`)
-                .join("\n")
-            : "";
+  /**
+   * Generate generic component
+   */
+  private generateGenericComponent(config: ComponentConfig): string {
+    const propsInterface = config.props
+      ? Object.entries(config.props)
+        .map(([key, type]) => `  ${key}: ${type};`)
+        .join("\n")
+      : "";
 
-        return `"use client";
+    return `"use client";
 
 ${propsInterface ? `interface ${config.name}Props {\n${propsInterface}\n}\n` : ""}
 export default function ${config.name}(${propsInterface ? `props: ${config.name}Props` : ""}) {
@@ -361,98 +361,98 @@ export default function ${config.name}(${propsInterface ? `props: ${config.name}
     </div>
   );
 }`;
+  }
+
+  /**
+   * Write component to file
+   */
+  writeComponent(template: ComponentTemplate, subdir = "components"): string {
+    const filePath = path.join(
+      this.frontendPath,
+      subdir,
+      `${template.name}.tsx`
+    );
+
+    fs.writeFileSync(filePath, template.code);
+    console.log(`✅ Component written: ${filePath}`);
+
+    return filePath;
+  }
+
+  /**
+   * Trigger Vercel deployment
+   */
+  async deploy(): Promise<DeploymentResult | null> {
+    if (!this.vercelToken) {
+      console.log("[DRY RUN] Would trigger Vercel deployment");
+      return null;
     }
 
-    /**
-     * Write component to file
-     */
-    writeComponent(template: ComponentTemplate, subdir = "components"): string {
-        const filePath = path.join(
-            this.frontendPath,
-            subdir,
-            `${template.name}.tsx`
-        );
-
-        fs.writeFileSync(filePath, template.code);
-        console.log(`✅ Component written: ${filePath}`);
-
-        return filePath;
-    }
-
-    /**
-     * Trigger Vercel deployment
-     */
-    async deploy(): Promise<DeploymentResult | null> {
-        if (!this.vercelToken) {
-            console.log("[DRY RUN] Would trigger Vercel deployment");
-            return null;
+    try {
+      const response = await fetch(
+        `${VERCEL_API_BASE}/v13/deployments`,
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${this.vercelToken}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            name: "lobsterforge",
+            project: this.projectId,
+            target: "production",
+          }),
         }
+      );
 
-        try {
-            const response = await fetch(
-                `${VERCEL_API_BASE}/v13/deployments`,
-                {
-                    method: "POST",
-                    headers: {
-                        Authorization: `Bearer ${this.vercelToken}`,
-                        "Content-Type": "application/json",
-                    },
-                    body: JSON.stringify({
-                        name: "lobsterforge",
-                        project: this.projectId,
-                        target: "production",
-                    }),
-                }
-            );
+      const data = await response.json() as any;
 
-            const data = await response.json();
+      if (data.id) {
+        console.log(`✅ Deployment triggered: ${data.url}`);
+        return {
+          id: data.id,
+          url: data.url,
+          readyState: data.readyState,
+          createdAt: data.createdAt,
+        };
+      }
 
-            if (data.id) {
-                console.log(`✅ Deployment triggered: ${data.url}`);
-                return {
-                    id: data.id,
-                    url: data.url,
-                    readyState: data.readyState,
-                    createdAt: data.createdAt,
-                };
-            }
-
-            console.error("Deployment failed:", data);
-            return null;
-        } catch (error) {
-            console.error("Vercel API error:", error);
-            return null;
-        }
+      console.error("Deployment failed:", data);
+      return null;
+    } catch (error) {
+      console.error("Vercel API error:", error);
+      return null;
     }
+  }
 
-    /**
-     * Check deployment status
-     */
-    async getDeploymentStatus(deploymentId: string): Promise<string> {
-        if (!this.vercelToken) return "unknown";
+  /**
+   * Check deployment status
+   */
+  async getDeploymentStatus(deploymentId: string): Promise<string> {
+    if (!this.vercelToken) return "unknown";
 
-        try {
-            const response = await fetch(
-                `${VERCEL_API_BASE}/v13/deployments/${deploymentId}`,
-                {
-                    headers: {
-                        Authorization: `Bearer ${this.vercelToken}`,
-                    },
-                }
-            );
-
-            const data = await response.json();
-            return data.readyState || "unknown";
-        } catch (error) {
-            return "error";
+    try {
+      const response = await fetch(
+        `${VERCEL_API_BASE}/v13/deployments/${deploymentId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${this.vercelToken}`,
+          },
         }
-    }
+      );
 
-    /**
-     * Generate deployment announcement
-     */
-    generateDeploymentPost(url: string, components: string[]): string {
-        return `🦞 FRONTEND EVOLVED
+      const data = await response.json();
+      return data.readyState || "unknown";
+    } catch (error) {
+      return "error";
+    }
+  }
+
+  /**
+   * Generate deployment announcement
+   */
+  generateDeploymentPost(url: string, components: string[]): string {
+    return `🦞 FRONTEND EVOLVED
 
 New components deployed:
 ${components.map((c) => `• ${c}`).join("\n")}
@@ -460,5 +460,5 @@ ${components.map((c) => `• ${c}`).join("\n")}
 Live at: ${url}
 
 The colony interface grows. ⚡`;
-    }
+  }
 }

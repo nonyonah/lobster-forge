@@ -68,6 +68,8 @@ export async function sendEth(
     if (!walletClient?.account) throw new Error("No wallet initialized");
 
     const hash = await walletClient.sendTransaction({
+        account: walletClient.account!,
+        chain,
         to,
         value: parseEther(amountEth),
         gas: options?.gasLimit,

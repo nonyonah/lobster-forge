@@ -137,6 +137,15 @@ async function runLoop(dryRun = false): Promise<void> {
     console.log("📊 Phase 1: Gathering metrics...");
     const metrics = await gatherMetrics();
 
+    // EXPORT METRICS TO FRONTEND
+    try {
+        const metricsPath = path.join(__dirname, "../frontend/public/metrics.json");
+        fs.writeFileSync(metricsPath, JSON.stringify(metrics, null, 2));
+        console.log("💾 Metrics exported to frontend");
+    } catch (error) {
+        console.error("Failed to export metrics to frontend:", error);
+    }
+
     // Check if we can exit survival/conservation mode
     if (state.survivalMode && metrics.treasuryEth >= config.thresholds.conservationTreasuryEth) {
         state.survivalMode = false;

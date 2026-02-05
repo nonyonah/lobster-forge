@@ -4,7 +4,7 @@
  */
 
 import { parseAbi, encodeDeployData, type Hash, formatEther } from "viem";
-import type { WalletManager } from "../base-wallet-manager/scripts/wallet-manager";
+import type { WalletManager } from "../../base-wallet-manager/scripts/wallet-manager";
 
 export type ContractTier = 1 | 2 | 3;
 

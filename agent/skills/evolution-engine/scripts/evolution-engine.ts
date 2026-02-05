@@ -3,7 +3,7 @@
  * LLM-driven decision tree for autonomous evolution
  */
 
-import type { Metrics } from "../metrics-analyzer/scripts/metrics-analyzer";
+import type { Metrics } from "../../metrics-analyzer/scripts/metrics-analyzer";
 
 // Evolution thresholds
 const THRESHOLDS = {
