@@ -1,0 +1,24 @@
+{
+    "name": "lobsterforge-agent",
+    "version": "1.0.0",
+    "description": "LobsterForge Autonomous Onchain Agent",
+    "main": "index.ts",
+    "scripts": {
+        "start": "ts-node index.ts",
+        "dry-run": "ts-node index.ts --dry-run",
+        "build": "tsc",
+        "lint": "eslint . --ext .ts"
+    },
+    "dependencies": {
+        "viem": "^2.0.0",
+        "dotenv": "^16.0.0"
+    },
+    "devDependencies": {
+        "@types/node": "^20.0.0",
+        "typescript": "^5.0.0",
+        "ts-node": "^10.9.0",
+        "eslint": "^8.0.0",
+        "@typescript-eslint/parser": "^6.0.0",
+        "@typescript-eslint/eslint-plugin": "^6.0.0"
+    }
+}
